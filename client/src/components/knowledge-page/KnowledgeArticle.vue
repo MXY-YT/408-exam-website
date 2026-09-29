@@ -138,7 +138,7 @@ function renderInlineMath(text: string): string {
           v-for="block in subpoint.blocks"
           :id="block.id"
           :key="block.id"
-          class="scroll-mt-28"
+          class="min-w-0 scroll-mt-28"
         >
           <KnowledgeMarkdown
             v-if="block.type === 'paragraph'"

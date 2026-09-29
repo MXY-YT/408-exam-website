@@ -57,6 +57,12 @@ client/blob-report/
 # AI 助手本地锁文件
 skills-lock.json
 
+# 记忆中的凭证（禁止提交）
+memory/credentials.md
+
+# 本地打包产物
+client/dist.zip
+
 # 408-terms.txt 的 public 副本：由 vite 构建时从 src/ 自动生成，勿手动维护或提交
 client/public/search/408-terms.txt
 
