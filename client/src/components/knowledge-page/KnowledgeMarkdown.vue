@@ -3,6 +3,7 @@ import { computed } from "vue";
 import DOMPurify from "dompurify";
 import katex from "katex";
 import { marked } from "marked";
+import { wrapTablesInScrollContainer } from "../markdown/tableScroll";
 
 const props = defineProps<{
   source: string;
@@ -30,32 +31,8 @@ const html = computed(() => {
     USE_PROFILES: { html: true },
   });
 
-  return wrapTables(renderMath(sanitized as string));
+  return wrapTablesInScrollContainer(renderMath(sanitized as string));
 });
-
-/**
- * 多列表格在窄屏下的最小内容宽度会超过容器，而 overflow 对 table 元素
- * 本身无效。这里给每个表格包一层横向滚动容器，避免内容被裁剪。
- */
-function wrapTables(html: string): string {
-  if (!html.includes("<table")) return html;
-
-  const doc = new DOMParser().parseFromString(
-    `<div data-kb-root>${html}</div>`,
-    "text/html",
-  );
-  const root = doc.querySelector("[data-kb-root]");
-  if (!root) return html;
-
-  root.querySelectorAll("table").forEach((table) => {
-    const wrapper = doc.createElement("div");
-    wrapper.className = "kb-table-scroll";
-    table.replaceWith(wrapper);
-    wrapper.appendChild(table);
-  });
-
-  return root.innerHTML;
-}
 
 function renderMath(html: string): string {
   const mathPattern =
