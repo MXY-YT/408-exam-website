@@ -79,6 +79,20 @@ export function useKnowledgeReader() {
       findSelectedSection(routeContentId.value)?.id || section.value?.id || "",
   );
 
+  const sections = computed(() =>
+    book.value?.chapters.flatMap((chapter) => chapter.sections) ?? [],
+  );
+  const page = computed(() =>
+    sections.value.findIndex((item) => item.id === activeSectionId.value) + 1,
+  );
+  const totalPages = computed(() => sections.value.length);
+
+  function changePage(nextPage: number) {
+    if (loading.value || nextPage === page.value) return;
+    const target = sections.value[nextPage - 1];
+    if (target) selectSection(target.id);
+  }
+
   function scrollToRequestedBlock(retry = 0) {
     const id = requestedBlock.value;
     if (!id) return;
@@ -222,12 +236,15 @@ export function useKnowledgeReader() {
     book,
     bookId,
     books,
+    changePage,
     error,
     loading,
+    page,
     section,
     sectionExam,
     selectBook,
     selectSection,
     tocEntries,
+    totalPages,
   };
 }

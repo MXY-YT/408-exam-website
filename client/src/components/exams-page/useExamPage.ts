@@ -135,11 +135,12 @@ export function useExamPage() {
       exams.value = data.items;
       total.value = data.total;
       totalPages.value = data.totalPages;
-      const requested = preferredId || String(route.query.exam || "");
+      const requested = preferredId ?? String(route.query.exam || "");
+      const target = exams.value.find((exam) => exam.id === requested);
       await nextTick();
-      if (requested) scrollToExam(requested, false);
+      if (target) scrollToExam(target.id, false);
       else window.scrollTo({ top: 0 });
-      activeExamId.value = requested || exams.value[0]?.id || "";
+      activeExamId.value = target?.id || exams.value[0]?.id || "";
     } catch (reason) {
       error.value =
         reason instanceof Error
@@ -180,10 +181,15 @@ export function useExamPage() {
   }
 
   function changePage(nextPage: number) {
-    if (nextPage < 1 || nextPage > totalPages.value || nextPage === page.value)
-      return;
+    if (
+      loading.value ||
+      nextPage < 1 ||
+      nextPage > totalPages.value ||
+      nextPage === page.value
+    ) return;
     page.value = nextPage;
-    void load();
+    void router.replace({ query: buildFilterQuery() });
+    void load("");
   }
 
   function openSearchPage(term: string) {

@@ -33,8 +33,11 @@ const reader = useKnowledgeReader()
       :article-entries="reader.articleEntries.value"
       :error="reader.error.value"
       :loading="reader.loading.value"
+      :page="reader.page.value"
       :section="reader.section.value"
       :section-exam="reader.sectionExam.value"
+      :total-pages="reader.totalPages.value"
+      @page="reader.changePage"
     />
 
     <template #right="{ open, pinned, hover, pin }">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import type { Exam } from "@/types";
+import ReaderPageNavigation from "@/components/ReaderPageNavigation.vue";
 import ExamPaperItem from "./ExamPaperItem.vue";
 
 const props = defineProps<{
@@ -22,7 +23,12 @@ watch(
 );
 
 function changePage(page: number) {
-  if (page < 1 || page > props.totalPages || page === props.page) return;
+  if (
+    props.loading ||
+    page < 1 ||
+    page > props.totalPages ||
+    page === props.page
+  ) return;
   openToolsId.value = "";
   emit("page", page);
 }
@@ -65,25 +71,12 @@ function changePage(page: number) {
         </div>
       </section>
 
-      <nav
-        class="mt-7 flex items-center justify-between px-2"
-        aria-label="试卷分页"
-      >
-        <button
-          class="text-sm font-semibold text-slate-600 hover:text-[#12327f] disabled:opacity-25"
-          :disabled="page <= 1"
-          @click="changePage(page - 1)"
-        >
-          ← 上一页
-        </button>
-        <button
-          class="text-sm font-semibold text-slate-600 hover:text-[#12327f] disabled:opacity-25"
-          :disabled="page >= totalPages"
-          @click="changePage(page + 1)"
-        >
-          下一页 →
-        </button>
-      </nav>
+      <ReaderPageNavigation
+        :page="page"
+        :total-pages="totalPages"
+        :disabled="loading || Boolean(error)"
+        @page="changePage"
+      />
     </main>
   </div>
 </template>
